@@ -44,17 +44,6 @@
 <script src="/public/js/change_time.js"></script>
 
 <script>
-    // // 获取表格数据
-    // function getArticle() {
-    //     $.ajax({
-    //         url: '/getArticle'
-    //     }).then(res => {
-    //         // console.log(res);
-    //         appendTable(res);
-    //     })
-    // };
-    // getArticle();
-
     // 分页算法:
     // 一共10条数据,假设每每页显示3条,每页起始条数:当前页码减1,再乘以每页显示的行数
     // 起始位置limit = (当前页数page - 1) * 每页行数pagesize
@@ -196,8 +185,7 @@
                         layer.closeAll();
                     });
                 });
-            }
-
+            };
 
             // 跳转到编辑文章页面
             function updateArt(id) {
@@ -205,14 +193,6 @@
             };
         });
     });
-
-
-
-
-
-    $('#tbody').on('click', '#update', function() {
-
-    })
 </script>
 </body>
 

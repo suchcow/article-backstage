@@ -115,11 +115,10 @@
                     // 预览图片
                     $("#coverImg").attr('src', path);
                     avatarPath = path;
-                }
-            })
-
-        }
-    }
+                };
+            });
+        };
+    };
     // 添加文章
     layui.use(['element', 'form', 'layer', 'laydate'], function() {
         var element = layui.element;
@@ -135,10 +134,6 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data) {
-            // //loading层
-            // var index = layer.load(1, {
-            //     shade: [0.2, '#ccc'] //0.1透明度的白色背景
-            // });
             $(data.elem).addClass('layui-btn-disabled').text('添加中...');
             // data 是一个对象, data.field 拿到表单里的所有值
             // console.log(data);

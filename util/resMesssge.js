@@ -10,7 +10,6 @@ const resMesssge = {
     update_fail: { errcode: 15, message: '编辑失败' },
     upload_success: { errcode: 0, message: '上传成功' },
     upload_fail: { errcode: 16, message: '上传失败' }
-
 };
 // 暴露给 module 模块
 module.exports = resMesssge;

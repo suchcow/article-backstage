@@ -49,7 +49,7 @@ router.get('/updateArticleTable', Articlecontroller.updateArticleTable); // 展�
 
 router.get('/getArticleSort', Articlecontroller.getArticleSort); // 拿到文章分类 
 
-router.get('/getArticleSingleData', Articlecontroller.getArticleSingleData); // 拿到要需要编辑的数据 
+router.get('/getArticleSingleData', Articlecontroller.getArticleSingleData); // 拿到要需要编辑的文章单行数据 
 
 router.post('/updateSingArtile', Articlecontroller.updateSingArtile); // 编辑文章存入数据库
 

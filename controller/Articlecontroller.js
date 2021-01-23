@@ -76,7 +76,6 @@ let Articlecontroller = {
         if (req.file) {
             let { originalname, filename, destination } = req.file;
             let newName = originalname.substring(originalname.lastIndexOf('.'));
-            // console.log(newName)
             let oldPath = `${destination}${filename}`;
             let newPath = `${destination}${filename}${newName}`;
             fs.rename(oldPath, newPath, err => {
