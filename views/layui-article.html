@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>文章管理后台</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+    <!-- 引入 nprogress 加载进度条 -->
+    {{ include './common_tags/nprogress.html'}}
+
+    <div class="layui-layout layui-layout-admin">
+        <!-- 头部区域 -->
+        {{ include './common_tags/header.html'}}
+
+        <!-- 左侧导航区域 -->
+        {{ include './common_tags/side.html'}}
+
+        <!-- 内容主体区域 -->
+        <div class="layui-body">
+            <div style="padding: 15px;">
+                <h2>文章管理</h2>
+                <a href="/addArticleTable" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-top:10px;" id="addSort">
+                    <i class="layui-icon">&#xe654;</i>添加文章
+                </a>
+                <table class="layui-hide" id="test" lay-filter="test"></table>
+                <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit" id="update">编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+            </div>
+        </div>
+
+        <!-- 底部区域 -->
+        {{ include './common_tags/footer.html'}}
+    </div>
+</body>
+<script src="/public/layui/layui.js"></script>
+<!-- 引入moment 转换时间插件 -->
+<script src="/public/js/moment.js"></script>
+<script src="/public/js/change_time.js"></script>
+
+<script>
+    // // 获取表格数据
+    // function getArticle() {
+    //     $.ajax({
+    //         url: '/getArticle'
+    //     }).then(res => {
+    //         // console.log(res);
+    //         appendTable(res);
+    //     })
+    // };
+    // getArticle();
+
+    // 分页算法:
+    // 一共10条数据,假设每每页显示3条,每页起始条数:当前页码减1,再乘以每页显示的行数
+    // 起始位置limit = (当前页数page - 1) * 每页行数pagesize
+    // 第一页: limit = (1 - 1) * 3  => 0
+    // 第二页: limit = (2 - 1) * 3  => 3
+    // 第三页: limit = (3 - 1) * 3  => 6
+    // 第四页: limit = (4 - 1) * 3  => 9
+
+    // layui会自动把layer变为全局
+    layui.use(['table', 'layer', 'element'], function() {
+        var table = layui.table;
+        // 所获得的 tableIns 即为当前容器的实例
+        let tableIns = table.render({
+            toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+            defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            elem: '#test',
+            url: '/getArticle',
+            limit: 10,
+            title: '文章数据表',
+            cols: [
+                [{
+                    type: 'checkbox',
+                    fixed: 'left'
+                }, {
+                    field: 'article_id',
+                    title: 'ID',
+                    width: 60,
+                    fixed: 'left',
+                    unresize: true,
+                    sort: true,
+                    align: 'center'
+
+                }, {
+                    field: 'author',
+                    title: '作者',
+                    width: 100,
+                }, {
+                    field: 'title',
+                    title: '文章标题',
+                    width: 150,
+                    edit: 'text'
+                }, {
+                    field: 'content',
+                    title: '内容',
+
+                    edit: 'text',
+                }, {
+                    field: 'cover',
+                    title: '封面',
+                    width: 120
+                }, {
+                    field: 'sort_id',
+                    title: '分类',
+                    width: 80,
+                    edit: 'text',
+                    unresize: true,
+                    sort: true,
+                    align: 'center'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    width: 80,
+                    align: 'center',
+                    templet(item) {
+                        // console.log(status); // {},{},{}
+                        let statusObj = {
+                            '0': '未发布',
+                            '1': '已发布',
+                            '2': '审核中',
+                        };
+                        return statusObj[item.status];
+                    }
+                }, {
+                    field: 'release_time',
+                    title: '发布时间',
+                    width: 160,
+                    sort: true,
+                    templet(time) {
+                        return release_time = util.change_time(time.release_time);
+                    }
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#barDemo',
+                    width: 112
+                }]
+            ],
+            page: true,
+            text: {
+                none: '这里空空如也'
+            }
+        });
+
+        // 编辑 删除数据
+        table.on('tool(test)', function(obj) {
+            // console.log(obj); // {data:{},del:{},...}    
+            let article_id = obj.data.article_id; // 拿到要删除数据的article_id
+            // layer.msg(article_id);
+            switch (obj.event) {
+                case 'del':
+                    deleteArt(article_id);
+                    break;
+                case 'edit':
+                    updateArt(article_id);
+                    break;
+            };
+
+            // 封装删除数据函数
+            function deleteArt(id) {
+                layer.confirm('确认删除吗', {
+                    btn: ['是的', '取消'] //按钮
+                }, function() {
+                    $.ajax({
+                        type: 'post',
+                        url: "/deleteArticle",
+                        data: {
+                            article_id: id
+                        },
+                        dataType: "json"
+                    }).then(res => {
+                        // console.log(res);
+                        let {
+                            errcode,
+                            message
+                        } = res;
+                        if (errcode == 0) {
+                            // 关闭所有弹窗
+                            layer.closeAll();
+                            tableIns.reload(); // 重新加载表格,不刷新页面
+                            // layer.msg(message);
+                        };
+                    }).catch((err) => {
+                        console.log(err);
+                        // 关闭所有弹窗
+                        layer.closeAll();
+                    });
+                });
+            }
+
+
+            // 跳转到编辑文章页面
+            function updateArt(id) {
+                location.href = `/updateArticleTable?article_id=${id}`;
+            };
+        });
+    });
+
+
+
+
+
+    $('#tbody').on('click', '#update', function() {
+
+    })
+</script>
+</body>
+
+</html>
