@@ -27,7 +27,7 @@ let Articlecontroller = {
         let { page, limit: pagesize } = req.query;
         // 计算出每页起始行数
         let initial = (page - 1) * pagesize;
-        let sql = `select * from articles limit ${initial}, ${pagesize}`;
+        let sql = `select t1.*,t2.category from articles t1 left join article_sort t2 on t1.sort_id = t2.sort_id order by sort_id limit ${initial}, ${pagesize}`;
         let sql2 = 'select count(*) as count from articles';
         let promise1 = sqlQuery(sql2); // [{count:7}] 查询的count数
         let promise2 = sqlQuery(sql); // [{},{},{}] 查询的数据

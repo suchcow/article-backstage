@@ -41,7 +41,7 @@ router.get('/getArticle', Articlecontroller.getArticle); // 添加 article 表�
 
 router.get('/addArticleTable', Articlecontroller.addArticleTable); // 展示添加 addArticleTable 文章表页面  
 
-router.post('/coverApi', image.single('cover'), Articlecontroller.coverApi); // 上传文章封面图片
+router.post('/coverApi', image.single('file'), Articlecontroller.coverApi); // 上传文章封面图片
 
 router.post('/insertArticleTable', Articlecontroller.insertArticleTable); // 添加文章接口
 

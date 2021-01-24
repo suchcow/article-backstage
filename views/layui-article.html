@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>文章管理后台</title>
     <link rel="stylesheet" href="/public/layui/css/layui.css">
+    <!-- 引入灯箱css文件-->
+    <link rel="stylesheet" href="/public/css/lightbox.css">
 </head>
 
 <body class="layui-layout-body">
@@ -28,6 +30,8 @@
                 </a>
                 <table class="layui-hide" id="test" lay-filter="test"></table>
                 <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>
+                    <a class="layui-btn layui-btn-xs layui-bg-orange" id="verify" lay-event="verify">待审核</a>
                     <a class="layui-btn layui-btn-xs" lay-event="edit" id="update">编辑</a>
                     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                 </script>
@@ -42,7 +46,7 @@
 <!-- 引入moment 转换时间插件 -->
 <script src="/public/js/moment.js"></script>
 <script src="/public/js/change_time.js"></script>
-
+<script src="/public/js/lightbox-plus-jquery.min.js"></script>
 <script>
     // 分页算法:
     // 一共10条数据,假设每每页显示3条,每页起始条数:当前页码减1,再乘以每页显示的行数
@@ -72,7 +76,7 @@
                     type: 'checkbox',
                     fixed: 'left'
                 }, {
-                    field: 'article_id',
+                    field: '/article_id',
                     title: 'ID',
                     width: 60,
                     fixed: 'left',
@@ -97,9 +101,17 @@
                 }, {
                     field: 'cover',
                     title: '封面',
-                    width: 120
+                    width: 120,
+                    templet({
+                        cover
+                    }) {
+                        let imgStr = `<a class="example-image-link" href="${cover}" data-lightbox="example-1" data-title="封面">
+                        <img class="example-image" style="width:80px;" src="${cover}" alt="暂无图片" />
+                    </a>`;
+                        return imgStr;
+                    }
                 }, {
-                    field: 'sort_id',
+                    field: 'category',
                     title: '分类',
                     width: 80,
                     edit: 'text',
@@ -112,11 +124,11 @@
                     width: 80,
                     align: 'center',
                     templet(item) {
-                        // console.log(status); // {},{},{}
+                        // console.log(item); // {},{},{}
                         let statusObj = {
-                            '0': '未发布',
-                            '1': '已发布',
-                            '2': '审核中',
+                            '0': '<span class="layui-badge layui-bg-orange">未发布</span>',
+                            '1': '<span class="layui-badge layui-bg-blue">已发布</span>',
+                            '2': '<span class="layui-badge layui-bg-green">审核中</span>',
                         };
                         return statusObj[item.status];
                     }
@@ -131,8 +143,20 @@
                 }, {
                     fixed: 'right',
                     title: '操作',
-                    toolbar: '#barDemo',
-                    width: 112
+                    // toolbar: '#barDemo',
+                    width: 240,
+                    templet(item) {
+                        // console.log(item);
+                        let itemStr = `
+                            <a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>
+                            <a class="layui-btn layui-btn-xs layui-bg-cyan" lay-event="edit">编辑</a>
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>`;
+                        // 当前状态是0，说明是未发布，添加待审核标签
+                        if (item.status == 0) {
+                            itemStr += `<a class="layui-btn layui-btn-xs" style="background-color:purple;" lay-event="verify">待审核</a>`;
+                        }
+                        return itemStr;
+                    }
                 }]
             ],
             page: true,
@@ -192,6 +216,7 @@
                 location.href = `/updateArticleTable?article_id=${id}`;
             };
         });
+
     });
 </script>
 </body>
