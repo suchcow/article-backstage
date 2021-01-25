@@ -162,7 +162,16 @@ let Articlecontroller = {
         } catch (err) {
             console.log(err);
         }
+    },
+    // 统计出分类的文章总数
+    getStatistic: async(req, res) => {
+        // 连表查询所有文章数
+        let sql = `select count(*) total ,t2.category,t1.sort_id from articles t1 left join article_sort t2 on t1.sort_id = t2.sort_id group by t1.sort_id`;
+        let data = await sqlQuery(sql); // [{},{},{},{}]
+        // console.log(data);
+        res.json(data);
     }
+
 };
 
 // 暴露控制器

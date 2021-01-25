@@ -63,9 +63,9 @@ router.post('/loginApi', Usercontroller.loginApi); // 验证登录接口
 
 router.get('/quitLogin', Usercontroller.quitLogin); // 退出登录
 
-router.post('/insertUser', Usercontroller.insertUser); // 注册用户 
+router.post('/insertUser', Usercontroller.insertUser); // 注册用户  getStatistic
 
-
+router.get('/getStatistic', Articlecontroller.getStatistic); // 统计出分类的文章总数
 
 // 暴露路由器
 module.exports = router;
