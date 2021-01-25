@@ -9,7 +9,12 @@ const resMesssge = {
     update_success: { errcode: 0, message: '编辑成功' },
     update_fail: { errcode: 15, message: '编辑失败' },
     upload_success: { errcode: 0, message: '上传成功' },
-    upload_fail: { errcode: 16, message: '上传失败' }
+    upload_fail: { errcode: 16, message: '上传失败' },
+    login_success: { errcode: 0, message: '登录成功' },
+    login_fail: { errcode: 17, message: '用户名或密码错误' },
+    register_success: { errcode: 0, message: '注册成功' },
+    register_fail: { errcode: 18, message: '注册失败' }
+
 };
 // 暴露给 module 模块
 module.exports = resMesssge;

@@ -45,9 +45,8 @@ let Articlecontroller = {
     },
     // 删除文章 article 表单行数据
     deleteArticle: async(req, res) => {
-        var response;
-        let { article_id } = req.body;
-        // console.log(article_id);
+        let { article_id, oldCover } = req.body;
+        console.log(article_id, oldCover);
         if (!article_id) {
             res.json(message_err);
         } else {
@@ -55,16 +54,18 @@ let Articlecontroller = {
             try {
                 var result = await sqlQuery(mysql);
                 if (result.affectedRows) {
-                    response = delete_success;
+                    res.json(delete_success);
+                    // 成功之后，异步删除原图
+                    oldCover && fs.unlinkSync(oldCover);
                 } else {
-                    response = delete_fail;
+                    res.json(delete_fail);
                 }
             } catch (err) {
                 console.log(err);
-                response = delete_abnormal;
+                res.json(delete_abnormal);
             }
         };
-        res.json(response);
+
     },
     // 展示 addArticleTable 添加文章表格页面
     addArticleTable: (req, res) => {
@@ -135,24 +136,32 @@ let Articlecontroller = {
     // 编辑文章数据存入数据库
     updateSingArtile: async(req, res) => {
         // console.log(req.body);
-        let { title, author, content, sort_id, cover, status, release_time, article_id } = req.body;
+        let { title, content, sort_id, cover, status, article_id, oldCover } = req.body;
         if (!article_id) {
             res.json(message_err);
             return;
         }
-        let sql = `update articles set title='${title}',author='${author}',content='${content}',sort_id='${sort_id}',cover='${cover}',status='${status}',release_time='${release_time}' where article_id=${article_id}`;
+        var sql;
+        if (cover) {
+            sql = `update articles set title='${title}',content='${content}',sort_id='${sort_id}',cover='${cover}',status='${status}' where article_id=${article_id}`;
+        } else {
+            sql = `update articles set title='${title}',content='${content}',sort_id='${sort_id}',status='${status}' where article_id=${article_id}`;
+        };
         try {
             var result = await sqlQuery(sql);
             if (result.affectedRows) {
-                response = update_success;
+                // 成功之后，异步删除原图
+                cover && fs.unlink(oldCover, (err) => {
+                    if (err) throw err;
+                    console.log('已成功地删除文件');
+                });
+                res.json(update_success);
             } else {
-                response = update_fail;
+                res.json(update_fail);
             }
         } catch (err) {
             console.log(err);
-            response = delete_abnormal;
         }
-        res.json(response);
     }
 };
 

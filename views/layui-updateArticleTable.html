@@ -53,7 +53,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">封面:</label>
                         <div class="layui-input-inline">
-                            <button type="button" class="layui-btn" id="corver">
+                            <button type="button" class="layui-btn" id="cover">
                                 <i class="layui-icon">&#xe67c;</i>上传图片
                               </button>
                         </div>
@@ -114,11 +114,13 @@
         var laydate = layui.laydate;
         var form = layui.form;
         var upload = layui.upload;
+        let articleId;
+        let oldCover; // 保存原图路径
 
         function getArticleSingleData() {
             // 或取 url 地址后面的 article_id
             let reg = /article_id=(.*)&?/; // 匹配 url 地址后面 article_id 
-            let articleId = reg.exec(location.href)[1];
+            articleId = reg.exec(location.href)[1];
             // console.log(articleId); // articleId 是一个数组 articleId[1] 拿到捕获组里匹配的结果
             // 通过 articleId 拿到数据库里的单条数据
             $.ajax({
@@ -133,6 +135,7 @@
                     cover,
                     status,
                 } = res;
+                oldCover = cover; //记录原图的路径
                 // console.log(errcode, title, content, sort_id, cover, status);
                 if (res.errcode == 0) {
                     resetData(content, cover, status); // 赋值内容,封面,状态
@@ -154,13 +157,15 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data) {
-            $(data.elem).addClass('layui-btn-disabled').text('添加中...');
-            // 获取富文本的内容
-            data.field.content = editor.txt.html();
+            $(data.elem).addClass('layui-btn-disabled').text('编辑中...');
+            data.field.content = editor.txt.html(); // 获取富文本的内容
+            data.field.article_id = articleId; // 设置编辑的id
+            data.field.oldCover = oldCover; // 设置就封面
+            console.log(data.field);
             $.ajax({
                 type: 'post',
                 data: data.field,
-                url: '/insertArticleTable'
+                url: '/updateSingArtile'
             }).then(res => {
                 // console.log(res);
                 $(data.elem).removeClass('layui-btn-disabled').text('立即提交');
@@ -212,13 +217,6 @@
                 //请求异常回调
             }
         });
-    });
-
-    // 点击 重置内容
-    $('#reset').on('click', function() {
-        $('input[name]').val('');
-        $('textarea').val('');
-        $('select').val('');
     });
 </script>
 </body>

@@ -10,9 +10,11 @@ let router = express.Router();
 //  导入控制器 分类表
 let Sortcontroller = require('../controller/Sortcontroller.js');
 
-//  导入控制器 分类表
+//  导入控制器 文章表
 let Articlecontroller = require('../controller/Articlecontroller.js');
-// console.log(Sortcontroller);
+
+//  导入控制器 用户登录
+let Usercontroller = require('../controller/Usercontroller.js');
 
 // 在路由器身上绑定路由
 router.get(/^\/$|^\/admin$/, Sortcontroller.admin); //展示 admin页面
@@ -52,6 +54,17 @@ router.get('/getArticleSort', Articlecontroller.getArticleSort); // 拿到文章
 router.get('/getArticleSingleData', Articlecontroller.getArticleSingleData); // 拿到要需要编辑的文章单行数据 
 
 router.post('/updateSingArtile', Articlecontroller.updateSingArtile); // 编辑文章存入数据库
+
+router.get('/login', Usercontroller.login); // 展示 layui-login 用户登录页面
+
+router.post('/register', Usercontroller.register); // 展示 layui-login 注册页面 
+
+router.post('/loginApi', Usercontroller.loginApi); // 验证登录接口 
+
+router.get('/quitLogin', Usercontroller.quitLogin); // 退出登录
+
+router.post('/insertUser', Usercontroller.insertUser); // 注册用户 
+
 
 
 // 暴露路由器

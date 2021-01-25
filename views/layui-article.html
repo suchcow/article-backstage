@@ -160,12 +160,13 @@
 
         // 编辑 删除 查看内容数据
         table.on('tool(test)', function(obj) {
-            // console.log(obj); // {data:{},del:{},...}    
+            console.log(obj); // {data:{},del:{},...}    
             let article_id = obj.data.article_id; // 拿到要删除数据的article_id
             let content = obj.data.content; // 拿到文章内容
+            let oldCover = obj.data.cover; // 拿到文章封面
             switch (obj.event) {
                 case 'del':
-                    deleteArt(article_id);
+                    deleteArt(article_id, oldCover);
                     break;
                 case 'edit':
                     updateArt(article_id);
@@ -176,7 +177,8 @@
             };
 
             // 封装删除数据函数
-            function deleteArt(id) {
+            function deleteArt(id, path) {
+                // console.log(oldCover);
                 layer.confirm('确认删除吗', {
                     btn: ['是的', '取消'] //按钮
                 }, function() {
@@ -184,7 +186,8 @@
                         type: 'post',
                         url: "/deleteArticle",
                         data: {
-                            article_id: id
+                            article_id: id,
+                            oldCover: path
                         },
                         dataType: "json"
                     }).then(res => {
@@ -199,11 +202,7 @@
                             tableIns.reload(); // 重新加载表格,不刷新页面
                             // layer.msg(message);
                         };
-                    }).catch((err) => {
-                        console.log(err);
-                        // 关闭所有弹窗
-                        layer.closeAll();
-                    });
+                    })
                 });
             };
 

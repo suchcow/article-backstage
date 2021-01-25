@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/public/layui/css/layui.css">
 <!-- 头部区域 -->
 <div class="layui-header">
     <div class="layui-logo">layui 文章管理后台</div>
@@ -17,13 +18,33 @@
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
             <a href="javascript:;">
-                <img src="http://t.cn/RCzsdCq" class="layui-nav-img"> 贤心
+                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                <span id="user">匿名</span>
             </a>
             <dl class="layui-nav-child">
                 <dd><a href="">基本资料</a></dd>
                 <dd><a href="">安全设置</a></dd>
             </dl>
         </li>
-        <li class="layui-nav-item"><a href="">退了</a></li>
+        <li class="layui-nav-item"><a href="" id="quit">退了</a></li>
     </ul>
 </div>
+<script src="/public/layui/layui.all.js"></script>
+
+<script>
+    layui.use('layer', function() {
+        let layer = layui.layer;
+        // 设置当前用户的信息
+        $('#user').html(localStorage.getItem('username'));
+        // 退出
+        $('#quit').on('click', function() {
+            // 清空session(需要发送ajax请求)
+            $.get('/quitLogin', (res) => {
+                // 清空本地存储
+                localStorage.clear();
+                layer.msg(res.message)
+                location.href = '/login'
+            })
+        })
+    })
+</script>
