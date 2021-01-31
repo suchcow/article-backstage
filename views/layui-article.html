@@ -131,7 +131,12 @@
                     width: 220,
                     sort: true,
                     templet(time) {
-                        return release_time = util.change_time(time.release_time);
+                        if (time.release_time == null) {
+                            release_time = ''
+                        } else {
+                            release_time = util.change_time(time.release_time)
+                        }
+                        return release_time;
                     }
                 }, {
                     fixed: 'right',
@@ -139,7 +144,7 @@
                     // toolbar: '#barDemo',
                     width: 240,
                     templet(item) {
-                        // console.log(item);
+                        console.log(item);
                         let itemStr = `
                             <a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>
                             <a class="layui-btn layui-btn-xs layui-bg-cyan" lay-event="edit">编辑</a>

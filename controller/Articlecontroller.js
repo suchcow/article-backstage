@@ -46,7 +46,7 @@ let Articlecontroller = {
     // 删除文章 article 表单行数据
     deleteArticle: async(req, res) => {
         let { article_id, oldCover } = req.body;
-        console.log(article_id, oldCover);
+        // console.log(article_id, oldCover);
         if (!article_id) {
             res.json(message_err);
         } else {
@@ -92,8 +92,12 @@ let Articlecontroller = {
     // 添加文章
     insertArticleTable: async(req, res) => {
         let { title, author, content, sort_id, cover, status, release_time } = req.body;
+        let statusObj = {
+            '已发布': 1,
+            '未发布': 0
+        }
         let sql = `insert into articles(title,author,content,sort_id,cover,status,release_time) 
-        values('${title}','${author}','${content}','${sort_id}','${cover}','${status}','${release_time}')`;
+        values('${title}','${author}','${content}','${sort_id}','${cover}','${statusObj[status]}','${release_time}')`;
         try {
             var result = await sqlQuery(sql);
             if (result.affectedRows) {
@@ -170,8 +174,15 @@ let Articlecontroller = {
         let data = await sqlQuery(sql); // [{},{},{},{}]
         // console.log(data);
         res.json(data);
+    },
+    // 统计每月文章发布的数据
+    getMonthlyArt: async(req, res) => {
+        // 查询每月发布的文章数
+        let sql = 'select month(release_time) month,count(*) as total from articles where year(release_time) = year(now()) group by month(release_time)';
+        let data = await sqlQuery(sql);
+        // console.log(data);
+        res.json(data);
     }
-
 };
 
 // 暴露控制器

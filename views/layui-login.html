@@ -70,43 +70,56 @@
 </body>
 <script src="/public/js/login.js"></script>
 <script src="/public/layui/layui.all.js"></script>
+<!-- 引入moment 转换时间插件 -->
+<script src="/public/js/moment.js"></script>
+<script src="/public/js/change_time.js"></script>
 
 <script>
     // 注册用户
     $('#register').on('click', function() {
-            var reuserVal = $.trim($('input[name="reusername"]').val());
-            var repassVal = $.trim($('input[name="repassword"]').val());
+        var reuserVal = $.trim($('input[name="reusername"]').val());
+        var repassVal = $.trim($('input[name="repassword"]').val());
 
-            if (reuserVal == '' || repassVal == '') {
-                layer.msg('用户名或密码不能为空')
-                return;
-            };
-            // 注册账户
-            $.ajax({
-                url: '/insertUser',
-                type: 'post',
-                dataType: 'json',
-                data: {
-                    username: reuserVal,
-                    password: repassVal,
-                }
-            }).then(res => {
-                console.log(res);
-                let {
-                    errcode,
-                    message
-                } = res;
-                if (errcode == 0) {
-                    layer.msg(message);
-                    $('.panel--box').eq(0).siblings().removeClass('active');
-                    $('.panel--box')[0].classList.add('active');
-                } else {
-                    layer.msg(message);
-                }
+        if (reuserVal == '' || repassVal == '') {
+            layer.msg('用户名或密码不能为空')
+            return;
+        };
+        // 注册账户
+        $.ajax({
+            url: '/insertUser',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                username: reuserVal,
+                password: repassVal,
+            }
+        }).then(res => {
+            console.log(res);
+            let {
+                errcode,
+                message
+            } = res;
+            if (errcode == 0) {
+                layer.msg(message);
+                $('.panel--box').eq(0).siblings().removeClass('active');
+                $('.panel--box')[0].classList.add('active');
+            } else {
+                layer.msg(message);
+            }
 
-            });
-        })
-        // 登录验证
+        });
+    });
+
+    // 更新最后一次登录时间
+    function getLocalTime(time) {
+        // 转为 2021-1-31 1:07:03 格式
+        return new Date(parseInt(time)).toLocaleString().replace(/\//g, '-').replace(/[\u4e00-\u9fa5]/g, '');
+    };
+    var date = +new Date(); //获取当前时间戳
+    let last_login = getLocalTime(date);
+    // console.log(last_login);
+
+    // 登录验证
     $('#login').on('click', function() {
         var userVal = $.trim($('input[name="username"]').val());
         var passVal = $.trim($('input[name="password"]').val());
@@ -114,22 +127,26 @@
         if (userVal == '' || passVal == '') {
             layer.msg('用户名或密码不能为空')
             return;
-        }
+        };
+
+        // loading 提示 
         var index = layer.load(1, {
             shade: [0.3, '#aaa'] //0.3透明度的灰色背景
         });
+
         // 验证登录
         $.ajax({
             type: 'post',
             url: '/loginApi',
             data: {
                 username: userVal,
-                password: passVal
+                password: passVal,
+                last_login
             },
             dataType: 'json'
         }).then((res) => {
-            console.log(res)
-            layer.close(index)
+            // console.log(res);
+            layer.close(index);
             let {
                 errcode,
                 message
@@ -145,5 +162,7 @@
         });
     })
 </script>
+
+</html>
 
 </html>

@@ -18,17 +18,20 @@ let Usercontroller = {
     register: (req, res) => {
         res.render('layui-login.html');
     },
-    // 查询数据库获取 user_admin 用户表
+    // 查询数据库获取 user_admin 用户表 登录验证
     loginApi: async(req, res) => {
-        let { username, password } = req.body;
+        let { username, password, last_login } = req.body;
         // console.log(username, password);
         let sql = `select * from user_admin where username='${username}' and password='${password}'`;
         let result = await sqlQuery(sql);
         console.log(result);
         if (result.length) {
-            // .把用户信息存入到会话session中，
+            // 把用户信息存入到会话session中，
             let userInfo = result[0];
             req.session.userInfo = userInfo;
+            // 登录成功时更新最后一次登录的时间
+            let sql2 = `update user_admin set last_login='${last_login}' where username='${username}'`;
+            await sqlQuery(sql2);
             res.json(login_success);
         } else {
             res.json(login_fail);
@@ -76,6 +79,17 @@ let Usercontroller = {
             if (err) { throw err; }
         })
         res.json({ message: '退出成功' })
+    },
+    getUserInfor: async(req, res) => {
+        let { username } = req.query;
+        let sql = `select * from user_admin where username='${username}'`;
+        let result = await sqlQuery(sql);
+        // console.log(result);
+        if (result.length) {
+            res.json(result[0]);
+        } else {
+            res.json(message_err);
+        }
     }
 
 };

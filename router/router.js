@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
 
 // 设置传入文件的目录
 var image = multer({ dest: 'image/' });
@@ -65,7 +66,14 @@ router.get('/quitLogin', Usercontroller.quitLogin); // 退出登录
 
 router.post('/insertUser', Usercontroller.insertUser); // 注册用户  getStatistic
 
-router.get('/getStatistic', Articlecontroller.getStatistic); // 统计出分类的文章总数
+router.get('/getStatistic', Articlecontroller.getStatistic); // 统计出分类的文章总数 getUserInfor
 
+router.get('/getMonthlyArt', Articlecontroller.getMonthlyArt); // 统计出每月发布的文章数
+
+router.get('/getUserInfor', Usercontroller.getUserInfor); // 显示用户信息
+
+router.get('/', (req, res) => {
+    res.render('userInfor.html')
+});
 // 暴露路由器
 module.exports = router;

@@ -1,5 +1,134 @@
-<link rel="stylesheet" href="/public/layui/css/layui.css">
 <!-- 头部区域 -->
+<style>
+    .cover {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: auto;
+        height: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: none;
+        animation: showInfor 0.3s linear forwards;
+    }
+    
+    #userInfor {
+        margin: 20px auto;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        background-color: #fff;
+        width: 440px;
+        height: 540px;
+        display: block;
+    }
+    
+    #userInfor .title {
+        position: relative;
+        height: 60px;
+        width: 100%;
+    }
+    
+    #userInfor .title img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    
+    #userInfor .title i {
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
+    }
+    
+    #userInfor .content {
+        display: flex;
+        margin-top: 20px;
+    }
+    
+    .key {
+        width: 100px;
+    }
+    
+    .left,
+    .right {
+        overflow: hidden;
+        padding: 10px;
+        font-size: 18px;
+        line-height: 30px;
+        height: 30px;
+    }
+    
+    .left span {
+        float: right;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+    
+    .value {
+        width: 300px;
+    }
+    
+    .right span {
+        float: left;
+        margin-left: 20px;
+        margin: 5px 0;
+    }
+    
+    .show {
+        display: block;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    @keyframes showInfor {
+        from {
+            transform: scale(0.0001, 0.0001);
+        }
+        to {
+            transform: scale(1, 1);
+        }
+    }
+    
+    #updateBtn {
+        position: absolute;
+        right: 100px;
+        margin-top: 20px;
+    }
+    
+    #updateInfor {
+        position: absolute;
+        top: 100px;
+        left: 20px;
+    }
+    
+    #avatar_file {
+        position: absolute;
+        left: 0;
+        opacity: 0;
+        z-index: 10;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    
+    #username {
+        margin-left: 20px;
+        height: 60px;
+        line-height: 60px;
+        vertical-align: middle;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
 <div class="layui-header">
     <div class="layui-logo">layui 文章管理后台</div>
     <ul class="layui-nav layui-layout-left">
@@ -22,29 +151,187 @@
                 <span id="user">匿名</span>
             </a>
             <dl class="layui-nav-child">
-                <dd><a href="">基本资料</a></dd>
+                <dd><a href="" id="information">基本信息</a></dd>
                 <dd><a href="">安全设置</a></dd>
             </dl>
         </li>
         <li class="layui-nav-item"><a href="" id="quit">退了</a></li>
     </ul>
+
 </div>
+
+<div class="cover">
+    <div style="padding: 30px;" id="userInfor">
+
+        <div class="title">
+            <i class="layui-icon layui-icon-close-fill" style="font-size: 40px;" id="close_cover"></i>
+            <input type="file" id="avatar_file">
+            <img src="" alt="" id="avatar">
+            <span id="username"></span>
+        </div>
+        <div class="box show" id="box">
+            <div class="content">
+                <div class="key">
+                    <div class="left"><span>邮箱</span></div>
+                    <div class="left"><span>头像</span></div>
+                    <div class="left"><span>昵称</span></div>
+                    <div class="left"><span>性别</span></div>
+                    <div class="left"><span>地区</span></div>
+                    <div class="left"><span>签名</span></div>
+                </div>
+
+                <div class="value">
+                    <div class="right"> <span id="email">邮箱</span></div>
+                    <div class="right"> <span id="user_avatar">头像</span></div>
+                    <div class="right"> <span id="petName">昵称</span></div>
+                    <div class="right"> <span id="sex">性别</span></div>
+                    <div class="right"> <span id="region">地区</span></div>
+                    <div class="right"> <span id="sign">签名</span></div>
+                </div>
+            </div>
+            <div style="position:relative;margin-top:20px;" style="margin-top:20px;">
+                <button class="layui-btn" id="updateBtn">修改资料</button>
+            </div>
+        </div>
+
+
+        <div id="updateInfor" class="hide">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱:</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称:</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="petName" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <!-- <div class="layui-form-item">
+                    <label class="layui-form-label">地区</label>
+                    <div class="layui-input-inline">
+                        <select name="city" lay-verify="required">
+                      <option value=""></option>
+                      <option value="0">北京</option>
+                      <option value="1">上海</option>
+                      <option value="2">广州</option>
+                      <option value="3">深圳</option>
+                      <option value="4">杭州</option>
+                    </select>
+                    </div>
+                    <div class="layui-input-inline">
+                        <select name="city" lay-verify="required">
+                        <option value=""></option>
+                        <option value="0">北京</option>
+                        <option value="1">上海</option>
+                        <option value="2">广州</option>
+                        <option value="3">深圳</option>
+                        <option value="4">杭州</option>
+                    </div>
+                </div> -->
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别:</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="sex" value="男" title="男" style="margin-right:20px;">
+                        <input type="radio" name="sex" value="女" title="女" checked>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">个性签名:</label>
+                    <div class="layui-input-inline">
+                        <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">取消</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <script src="/public/layui/layui.all.js"></script>
 
 <script>
-    layui.use('layer', function() {
+    // 关闭遮盖层
+    $('#close_cover').on('click', function() {
+        $('.cover').hide();
+    });
+
+
+    layui.use(['layer', 'form'], function() {
         let layer = layui.layer;
+        var form = layui.form;
+
         // 设置当前用户的信息
         $('#user').html(localStorage.getItem('username'));
+
         // 退出
         $('#quit').on('click', function() {
-            // 清空session(需要发送ajax请求)
-            $.get('/quitLogin', (res) => {
-                // 清空本地存储
-                localStorage.clear();
-                layer.msg(res.message)
-                location.href = '/login'
+            layer.confirm('尊敬' + $('#user').html() + ',真的要离开吗?', {
+                btn: ['是的', '取消'] //按钮
+            }, function() {
+                // 清空session(需要发送ajax请求)
+                $.get('/quitLogin', (res) => {
+                    // 清空本地存储
+                    localStorage.clear();
+                    layer.msg('大爷,常来玩呀~~~');
+                    location.href = '/login';
+                })
+            });
+            return false;
+        });
+
+        // 编辑资料
+        $('#information').on('click', function() {
+                let informContent = $('#userInfor').html();
+                // console.log(informContent);
+                // 显示用户信息
+                $('.cover').show();
+
+                let userInfor = localStorage.getItem('username');
+                // console.log(userInfor);
+                $.get(`/getUserInfor?username=${userInfor}`, res => {
+                    console.log(res);
+                    let {
+                        username,
+                        user_avatar,
+                        petName,
+                        sex,
+                        region,
+                        sign
+                    } = res;
+                    showUserInfor(username, user_avatar, petName, sex, region, sign)
+                });
+                return false;
             })
+            // 显示用户信息
+        function showUserInfor(username, user_avatar, petName, sex, region, sign) {
+            console.log(username, petName, sex, region, sign);
+            $('#username').html(username);
+            $('#user_avatar').html(user_avatar);
+            $('#petName').html(petName);
+            $('#sex').html(sex);
+            $('#region').html(region);
+            $('#sign').html(sign);
+            $('#avatar').attr('src', user_avatar);
+        };
+
+        $('#updateBtn').on('click', function() {
+            $('#box').hide();
+            $('#updateInfor').show();
         })
-    })
+
+        // 提交表单
+
+    });
+</script>
+<script>
 </script>
