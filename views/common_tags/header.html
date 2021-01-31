@@ -38,12 +38,13 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
+        overflow: hidden;
     }
     
     #userInfor .title i {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: -26px;
+        right: -26px;
         cursor: pointer;
     }
     
@@ -147,7 +148,7 @@
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
             <a href="javascript:;">
-                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                <img src="" id="setUserAvatar" class="layui-nav-img">
                 <span id="user">匿名</span>
             </a>
             <dl class="layui-nav-child">
@@ -165,7 +166,7 @@
 
         <div class="title">
             <i class="layui-icon layui-icon-close-fill" style="font-size: 40px;" id="close_cover"></i>
-            <input type="file" id="avatar_file">
+            <input type="file" id="avatar_file" onchange="uploadPortrait(this)">
             <img src="" alt="" id="avatar">
             <span id="username"></span>
         </div>
@@ -173,7 +174,7 @@
             <div class="content">
                 <div class="key">
                     <div class="left"><span>邮箱</span></div>
-                    <div class="left"><span>头像</span></div>
+                    <div class="left"><span>用户名</span></div>
                     <div class="left"><span>昵称</span></div>
                     <div class="left"><span>性别</span></div>
                     <div class="left"><span>地区</span></div>
@@ -182,7 +183,7 @@
 
                 <div class="value">
                     <div class="right"> <span id="email">邮箱</span></div>
-                    <div class="right"> <span id="user_avatar">头像</span></div>
+                    <div class="right"> <span id="usernameInfor">用户名</span></div>
                     <div class="right"> <span id="petName">昵称</span></div>
                     <div class="right"> <span id="sex">性别</span></div>
                     <div class="right"> <span id="region">地区</span></div>
@@ -200,7 +201,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">邮箱:</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="email" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                        <input type="text" name="email" id="email" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -265,13 +266,53 @@
         $('.cover').hide();
     });
 
+    // 设置当前用户的信息
+    var username = localStorage.getItem('username');
+    $('#user').html(username);
+
+    let userInfor = {}; // 存储用户信息
+    // 获取头像路径
+    $.get(`/getUserInfor?username=${username}`, (res) => {
+        let {
+            user_avatar
+        } = res;
+        userInfor = res; // 将用户信息赋值给 userInfor 对象
+        $('#setUserAvatar').attr('src', user_avatar); // 显示头像
+    })
+
+    // 更换头像
+    function uploadPortrait(file) {
+        // 拿到文件的二进制
+        let fileBinary = file.files[0];
+        var formData = new FormData();
+        formData.append('user_avatar', fileBinary);
+        // 判断文件是否选中文件
+        if (fileBinary.size !== 0) {
+            $.ajax({
+                type: "post",
+                url: `/updateUserAvatar?username=${username}`,
+                data: formData,
+                processData: false, // 不需要对数据进行处理
+                contentType: false, // 不需要指定内容类型
+                dataType: "json"
+            }).then(res => {
+                // console.log(res);
+                let {
+                    path
+                } = res;
+                if (path) {
+                    // 替换图片
+                    $("#avatar").attr('src', path);
+                    $('#setUserAvatar').attr('src', path);
+                    layer.msg('更换成功');
+                }
+            })
+        }
+    }
 
     layui.use(['layer', 'form'], function() {
         let layer = layui.layer;
         var form = layui.form;
-
-        // 设置当前用户的信息
-        $('#user').html(localStorage.getItem('username'));
 
         // 退出
         $('#quit').on('click', function() {
@@ -291,39 +332,55 @@
 
         // 编辑资料
         $('#information').on('click', function() {
-                let informContent = $('#userInfor').html();
-                // console.log(informContent);
-                // 显示用户信息
-                $('.cover').show();
-
-                let userInfor = localStorage.getItem('username');
-                // console.log(userInfor);
-                $.get(`/getUserInfor?username=${userInfor}`, res => {
-                    console.log(res);
-                    let {
-                        username,
-                        user_avatar,
-                        petName,
-                        sex,
-                        region,
-                        sign
-                    } = res;
-                    showUserInfor(username, user_avatar, petName, sex, region, sign)
-                });
-                return false;
-            })
+            let informContent = $('#userInfor').html();
+            // console.log(informContent);
             // 显示用户信息
-        function showUserInfor(username, user_avatar, petName, sex, region, sign) {
-            console.log(username, petName, sex, region, sign);
-            $('#username').html(username);
-            $('#user_avatar').html(user_avatar);
-            $('#petName').html(petName);
-            $('#sex').html(sex);
-            $('#region').html(region);
-            $('#sign').html(sign);
-            $('#avatar').attr('src', user_avatar);
+            $('.cover').show();
+            let {
+                username,
+                user_avatar,
+                petName,
+                sex,
+                region,
+                sign,
+                email
+            } = userInfor;
+            showUserInfor(username, user_avatar, petName, sex, region, sign, email)
+            return false;
+        });
+
+        // 编辑资料
+        $('#information').on('click', function() {
+            let informContent = $('#userInfor').html();
+            // console.log(informContent);
+            // 显示用户信息
+            $('.cover').show();
+            let {
+                username,
+                user_avatar,
+                petName,
+                sex,
+                region,
+                sign,
+                email
+            } = userInfor;
+            showUserInfor(username, user_avatar, petName, sex, region, sign, email)
+            return false;
+        });
+
+        // 显示用户信息
+        function showUserInfor(username, user_avatar, petName, sex, region, sign, email) {
+            // console.log(username, petName, sex, region, sign);
+            $('#usernameInfor').html(username); // 用户名
+            $('#email').html(email); // 邮箱
+            $('#petName').html(petName); // 昵称
+            $('#sex').html(sex); // 性别
+            $('#region').html(region); // 地区
+            $('#sign').html(sign); // 个性签名
+            $('#avatar').attr('src', user_avatar); // 头像
         };
 
+        // 编辑用户信息
         $('#updateBtn').on('click', function() {
             $('#box').hide();
             $('#updateInfor').show();

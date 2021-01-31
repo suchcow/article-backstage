@@ -54,6 +54,15 @@
                         <input name="reusername" placeholder="用户名" type="text" autofocus>
                     </div>
                     <div class="sign--input">
+                        <input name="petName" placeholder="昵称" type="text" autofocus>
+                    </div>
+                    <div class="sign--input">
+                        <input type="file" name="user_avatar" id="setAvatar" onchange="uploadPortrait(this)">
+                    </div>
+                    <div class="sign--input" style="width: 100px; height: 60px; padding-left:20px">
+                        <img src="" alt="" id='avatar' style="width:100%;">
+                    </div>
+                    <div class="sign--input">
                         <input name="email" placeholder="邮箱" type="text">
                     </div>
                     <div class="sign--input">
@@ -75,10 +84,44 @@
 <script src="/public/js/change_time.js"></script>
 
 <script>
+    let avatarPath = ''; // 记录上传头像的地址
+    // 上传头像
+    function uploadPortrait(file) {
+        // 拿到文件的二进制
+        let fileBinary = file.files[0];
+        let formData = new FormData();
+        let username = localStorage.getItem('username');
+        // 判断文件是否选中文件
+        if (fileBinary.size !== 0) {
+            formData.append('user_avatar', fileBinary);
+            formData.append('username', username);
+            $.ajax({
+                type: "post",
+                url: "/uploadUserAvatar",
+                data: formData,
+                processData: false, // 不需要对数据进行处理
+                contentType: false, // 不需要指定内容类型
+                dataType: "json"
+            }).then(res => {
+                console.log(res);
+                let {
+                    path
+                } = res;
+                if (path) {
+                    // 预览图片
+                    $("#avatar").attr('src', path);
+                    avatarPath = path;
+                }
+            })
+        }
+    };
+
     // 注册用户
     $('#register').on('click', function() {
         var reuserVal = $.trim($('input[name="reusername"]').val());
         var repassVal = $.trim($('input[name="repassword"]').val());
+        var emailVal = $.trim($('input[name="email"]').val());
+        var petNameVal = $.trim($('input[name="petName"]').val());
 
         if (reuserVal == '' || repassVal == '') {
             layer.msg('用户名或密码不能为空')
@@ -92,6 +135,9 @@
             data: {
                 username: reuserVal,
                 password: repassVal,
+                user_avatar: avatarPath,
+                email: emailVal,
+                petName: petNameVal,
             }
         }).then(res => {
             console.log(res);
@@ -110,7 +156,8 @@
         });
     });
 
-    // 更新最后一次登录时间
+
+    // 添加更新最后一次登录时间
     function getLocalTime(time) {
         // 转为 2021-1-31 1:07:03 格式
         return new Date(parseInt(time)).toLocaleString().replace(/\//g, '-').replace(/[\u4e00-\u9fa5]/g, '');
@@ -123,6 +170,8 @@
     $('#login').on('click', function() {
         var userVal = $.trim($('input[name="username"]').val());
         var passVal = $.trim($('input[name="password"]').val());
+
+
         console.log(userVal, passVal);
         if (userVal == '' || passVal == '') {
             layer.msg('用户名或密码不能为空')
@@ -141,7 +190,7 @@
             data: {
                 username: userVal,
                 password: passVal,
-                last_login
+                last_login,
             },
             dataType: 'json'
         }).then((res) => {
@@ -155,6 +204,7 @@
                 layer.msg(`欢迎：${userVal}回家`);
                 // 把用户名存储到本地存储，实现跨页面共享数据
                 localStorage.setItem('username', userVal);
+                layer
                 location.href = '/';
             } else {
                 layer.msg(message);

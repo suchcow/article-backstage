@@ -2,8 +2,11 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 
-// 设置传入文件的目录
+// 创建文章封面文件夹
 var image = multer({ dest: 'image/' });
+
+// 创建用户头像文件夹
+var user_avatar = multer({ dest: 'user_avatar/' });
 
 // 得到一个路由器
 let router = express.Router();
@@ -58,19 +61,25 @@ router.post('/updateSingArtile', Articlecontroller.updateSingArtile); // 编辑�
 
 router.get('/login', Usercontroller.login); // 展示 layui-login 用户登录页面
 
+router.get('/updatePass', Usercontroller.updatePass); // 展示 修改密码 页面
+
 router.post('/register', Usercontroller.register); // 展示 layui-login 注册页面 
 
 router.post('/loginApi', Usercontroller.loginApi); // 验证登录接口 
 
 router.get('/quitLogin', Usercontroller.quitLogin); // 退出登录
 
-router.post('/insertUser', Usercontroller.insertUser); // 注册用户  getStatistic
+router.post('/insertUser', Usercontroller.insertUser); // 注册用户  
 
-router.get('/getStatistic', Articlecontroller.getStatistic); // 统计出分类的文章总数 getUserInfor
+router.get('/getStatistic', Articlecontroller.getStatistic); // 统计出分类的文章总数 
 
 router.get('/getMonthlyArt', Articlecontroller.getMonthlyArt); // 统计出每月发布的文章数
 
-router.get('/getUserInfor', Usercontroller.getUserInfor); // 显示用户信息
+router.get('/getUserInfor', Usercontroller.getUserInfor); // 显示用户信息  updateUserAvatar
+
+router.post('/uploadUserAvatar', user_avatar.single('user_avatar'), Usercontroller.uploadUserAvatar); // 上传用户头像  
+
+router.post('/updateUserAvatar', user_avatar.single('user_avatar'), Usercontroller.updateUserAvatar); // 更换用户头像  
 
 router.get('/', (req, res) => {
     res.render('userInfor.html')
