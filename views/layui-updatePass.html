@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>登录</title>
+    <title>修改密码</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css">
+
     <style>
         * {
             margin: 0;
@@ -86,15 +88,15 @@
         <form>
             <div class="title">旧密码:</div>
             <div class="user">
-                <input type="text" name="username" id="user" placeholder="若包含字母,请注意大小写">
+                <input type="text" name="text" id="oldPass" placeholder="若包含字母,请注意大小写">
             </div>
             <div class="title">新密码:</div>
             <div class="pass">
-                <input type="password" name="password" id="pass" placeholder="请输入新密码">
+                <input type="password" name="password" id="newPass" placeholder="请输入新密码">
             </div>
             <div class="title">确认密码:</div>
             <div class="pass">
-                <input type="password" name="repassword" id="repass" placeholder="确认新密码">
+                <input type="password" name="repassword" id="rePass" placeholder="确认新密码">
             </div>
             <div id="prompt"></div>
             <input type="button" value="确认" id="btn">
@@ -103,8 +105,47 @@
     </div>
 </body>
 <script src="/public/js/jquery-3.5.1.min.js"></script>
+<script src="/public/layui/layui.all.js"></script>
+
 <script>
+    // 获取当前用户的信息
+    var username = localStorage.getItem('username');
+    // console.log(username);
     $('#btn').on('click', function() {
+        let oldPassVal = $('#oldPass').val();
+        let newPassVal = $('#newPass').val();
+        let rePassVal = $('#rePass').val();
+
+        // console.log(oldPassVal, newPassVal, rePassVal);
+        if (oldPassVal == '' || newPassVal == '') {
+            layer.msg('旧密码不能为空')
+            return;
+        };
+
+        if (newPassVal !== rePassVal) {
+            layer.msg('两次输入密码不一致')
+            return;
+        };
+        $.ajax({
+            url: '/updatePassInfor',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                newPassword: newPassVal,
+                oldPassword: oldPassVal,
+                username: username
+            }
+        }).then(res => {
+            let {
+                errcode,
+                message
+            } = res;
+            if (errcode == 0) {
+                layer.msg(message);
+                localStorage.clear(); // 清除当前网站的所有的用户信息
+                location.href = '/login'; // 回到登录页面
+            }
+        })
 
     })
 </script>

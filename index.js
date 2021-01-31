@@ -39,6 +39,25 @@ app.engine('html', express_template);
 // 使用模板引擎扩展名为html
 app.set('view engine', 'html');
 
+// 在进入到路由匹配函数之前，要进行验证权限
+app.use(function(req, res, next) {
+    let path = req.path.toLowerCase(); // 1.获取当前访问路由
+    let noSession = ['/login', '/loginApi', '/insertUser'] // 2. 定义放行的路由，即不需要权限验证
+    if (noSession.includes(path)) {
+        // 如果为 true 放行
+        next();
+    } else {
+        // 否则需要验证权限 session
+        if (req.session.userInfo) {
+            // 有权限，放行
+            next();
+        } else {
+            // 则否,跳转到登录页面 
+            res.redirect('/login');
+        }
+    }
+});
+
 // 使用路由中间件
 app.use(router);
 

@@ -13,7 +13,10 @@ const resMesssge = {
     login_success: { errcode: 0, message: '登录成功' },
     login_fail: { errcode: 17, message: '用户名或密码错误' },
     register_success: { errcode: 0, message: '注册成功' },
-    register_fail: { errcode: 18, message: '注册失败' }
+    register_fail: { errcode: 18, message: '注册失败' },
+    update_pass_success: { errcode: 0, message: '修改成功' },
+    update_pass_err: { errcode: 19, message: '您输入的旧密码有误' },
+    update_pass_fail: { errcode: 20, message: '修改失败' },
 
 };
 // 暴露给 module 模块

@@ -63,8 +63,6 @@ router.get('/login', Usercontroller.login); // 展示 layui-login 用户登录�
 
 router.get('/updatePass', Usercontroller.updatePass); // 展示 修改密码 页面
 
-router.post('/register', Usercontroller.register); // 展示 layui-login 注册页面 
-
 router.post('/loginApi', Usercontroller.loginApi); // 验证登录接口 
 
 router.get('/quitLogin', Usercontroller.quitLogin); // 退出登录
@@ -79,7 +77,10 @@ router.get('/getUserInfor', Usercontroller.getUserInfor); // 显示用户信息 
 
 router.post('/uploadUserAvatar', user_avatar.single('user_avatar'), Usercontroller.uploadUserAvatar); // 上传用户头像  
 
-router.post('/updateUserAvatar', user_avatar.single('user_avatar'), Usercontroller.updateUserAvatar); // 更换用户头像  
+router.post('/updateUserAvatar', user_avatar.single('user_avatar'), Usercontroller.updateUserAvatar); // 更换用户头像
+
+router.post('/updatePassInfor', Usercontroller.updatePassInfor); // 修改密码  
+
 
 router.get('/', (req, res) => {
     res.render('userInfor.html')

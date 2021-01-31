@@ -153,7 +153,7 @@
             </a>
             <dl class="layui-nav-child">
                 <dd><a href="" id="information">基本信息</a></dd>
-                <dd><a href="">安全设置</a></dd>
+                <dd><a href="/updatePass">安全设置</a></dd>
             </dl>
         </li>
         <li class="layui-nav-item"><a href="" id="quit">退了</a></li>
@@ -330,7 +330,7 @@
             return false;
         });
 
-        // 编辑资料
+        // 查看资料
         $('#information').on('click', function() {
             let informContent = $('#userInfor').html();
             // console.log(informContent);
@@ -348,6 +348,8 @@
             showUserInfor(username, user_avatar, petName, sex, region, sign, email)
             return false;
         });
+
+
 
         // 编辑资料
         $('#information').on('click', function() {

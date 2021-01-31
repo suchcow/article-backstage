@@ -7,7 +7,10 @@ let {
     register_success,
     register_fail,
     upload_success,
-    upload_fail
+    upload_fail,
+    update_pass_success,
+    update_pass_err,
+    update_pass_fail
 } = require('../util/resMesssge.js');
 
 const fs = require('fs');
@@ -20,10 +23,6 @@ let Usercontroller = {
     // 展示 修改密码 页面
     updatePass: (req, res) => {
         res.render('layui-updatePass.html');
-    },
-    // 展示 register 注册页面
-    register: (req, res) => {
-        res.render('layui-login.html');
     },
     // 查询数据库获取 user_admin 用户表 登录验证
     loginApi: async(req, res) => {
@@ -128,6 +127,26 @@ let Usercontroller = {
             res.json(message_err);
         };
     },
+    updatePassInfor: async(req, res) => {
+        // console.log(req.body);
+        let { oldPassword, newPassword, username } = req.body;
+        let sql = `select * from user_admin where username='${username}'`;
+        let data = await sqlQuery(sql);
+        let pass = data[0].password; // 拿到用户的旧密码
+
+        if (oldPassword == pass) { // 如果用户传过来的密码与数据库里密码一致,说明输入的密码正确,再修改数据库里的密码
+            // 更新数据库用户密码
+            let sql2 = `update user_admin set password='${newPassword}' where username='${username}'`;
+            let result = await sqlQuery(sql2);
+            if (result.affectedRows) {
+                res.json(update_pass_success);
+            } else {
+                res.json(update_pass_fail);
+            }
+        } else {
+            res.json(update_pass_err);
+        }
+    }
 };
 
 // 暴露控制器
