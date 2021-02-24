@@ -4,8 +4,20 @@ const artTemplate = require('art-template');
 const express_template = require('express-art-template');
 
 const app = express();
+
+// 设置语序跨域
+const cors = require('cors');
+
+app.use(cors());
+
 // 导入路由模块
 let router = require('./router/router.js');
+
+// 导入api前台路由
+let api_router = require('./router/api_router.js');
+
+app.use('/api', api_router);
+
 
 // 托管静态资源
 app.use(express.static(path.join(__dirname)));

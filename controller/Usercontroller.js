@@ -29,11 +29,11 @@ let Usercontroller = {
         let { username, password, last_login } = req.body;
         // console.log(username, password);
         let sql = `select * from user_admin where username='${username}' and password='${password}'`;
-        let result = await sqlQuery(sql);
-        console.log(result);
-        if (result.length) {
+        let data = await sqlQuery(sql);
+        // console.log(result);
+        if (data.length) {
             // 把用户信息存入到会话session中，
-            let userInfo = result[0];
+            let userInfo = data[0];
             req.session.userInfo = userInfo;
             // 登录成功时更新最后一次登录的时间
             let sql2 = `update user_admin set last_login='${last_login}' where username='${username}'`;

@@ -350,26 +350,6 @@
         });
 
 
-
-        // 编辑资料
-        $('#information').on('click', function() {
-            let informContent = $('#userInfor').html();
-            // console.log(informContent);
-            // 显示用户信息
-            $('.cover').show();
-            let {
-                username,
-                user_avatar,
-                petName,
-                sex,
-                region,
-                sign,
-                email
-            } = userInfor;
-            showUserInfor(username, user_avatar, petName, sex, region, sign, email)
-            return false;
-        });
-
         // 显示用户信息
         function showUserInfor(username, user_avatar, petName, sex, region, sign, email) {
             // console.log(username, petName, sex, region, sign);

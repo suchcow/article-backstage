@@ -170,9 +170,7 @@
     $('#login').on('click', function() {
         var userVal = $.trim($('input[name="username"]').val());
         var passVal = $.trim($('input[name="password"]').val());
-
-
-        console.log(userVal, passVal);
+        // console.log(userVal, passVal);
         if (userVal == '' || passVal == '') {
             layer.msg('用户名或密码不能为空')
             return;
@@ -204,7 +202,6 @@
                 layer.msg(`欢迎：${userVal}回家`);
                 // 把用户名存储到本地存储，实现跨页面共享数据
                 localStorage.setItem('username', userVal);
-                layer
                 location.href = '/';
             } else {
                 layer.msg(message);
